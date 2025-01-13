@@ -4,7 +4,7 @@ data class Mahasiswa(
     var nim:String,
     var nama:String,
     var alamat:String,
-    var gender:String,
+    var jenisKelamin:String,
     var kelas:String,
     var angkatan:String
 ){
