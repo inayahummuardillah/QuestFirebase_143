@@ -2,7 +2,6 @@ package com.example.p9.ui.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -76,7 +75,7 @@ fun HomeScreen(
         }
     ) { innerPadding ->
         HomeStatus(
-            homeUiState = viewModel.mhsUiState,
+            homeUiState = viewModel.mhsUIState,
             retryAction = { viewModel.getMhs() },
             modifier = Modifier.padding(innerPadding),
             onDetailClick = onDetailClick,
@@ -93,7 +92,7 @@ fun HomeStatus(
     retryAction: () -> Unit,
     modifier: Modifier = Modifier,
     onDeleteClick: (Mahasiswa) -> Unit = {},
-    onDetailClick: (String) -> Unit
+    onDetailClick: (String) -> Unit,
 ) {
     var deleteConfirmationRequired by rememberSaveable {
         mutableStateOf<Mahasiswa?>(null)
@@ -103,7 +102,7 @@ fun HomeStatus(
         is HomeUiState.Loading -> {
             OnLoading(modifier = modifier.fillMaxSize())
         }
-        is HomeUiState.Succes -> {
+        is HomeUiState.Success -> {
             ListMahasiswa(
                 listMhs = homeUiState.data,
                 modifier = modifier.fillMaxWidth(),
