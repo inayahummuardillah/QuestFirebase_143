@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.p9.model.Mahasiswa
 import com.example.p9.repository.MhsRepository
 import kotlinx.coroutines.flow.catch
@@ -13,40 +12,48 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class HomeViewModel (
-    private val repoMhs: MhsRepository
-): ViewModel() {
+    private val repository: MhsRepository
+) : ViewModel(){
 
-    var mhsUiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
+    var mhsUIState: HomeUiState by mutableStateOf(HomeUiState.Loading)
         private set
 
-    init { //menjalankan
+    init {
         getMhs()
     }
 
-    fun getMhs() {
+    fun getMhs(){
         viewModelScope.launch {
-            repoMhs.getAllMhs(). onStart {
-                mhsUiState = HomeUiState.Loading
+            repository.getAllMahasiswa().onStart {
+                mhsUIState = HomeUiState.Loading
             }
                 .catch {
-                    mhsUiState = HomeUiState.Error( e = it)
+                    mhsUIState = HomeUiState.Error(e = it)
                 }
-                .collect{
-                    mhsUiState = if(it.isEmpty()){
-                        HomeUiState.Error(Exception("Belum ada data mahasiswa"))
+                .collect {
+                    mhsUIState = if (it.isEmpty()){
+                        HomeUiState.Error(Exception("Belum ada data mahsiswa"))
                     } else {
-                        HomeUiState.Succes(it)
+                        HomeUiState.Success(it)
                     }
                 }
         }
     }
-}
 
-sealed class HomeUiState {
-    //Loading
+    fun deleteMhs(mahasiswa: Mahasiswa) {
+        viewModelScope.launch {
+            try { repository.deleteMhs(mahasiswa)
+            } catch (e: Exception) {
+                mhsUIState = HomeUiState.Error(e)
+            }
+        }
+    }
+}
+sealed class HomeUiState{
+    //loading
     object Loading : HomeUiState()
-    //Sukses
-    data class Succes( val data: List<Mahasiswa>) : HomeUiState()
-    //Eror
-    data class Error( val e: Throwable) : HomeUiState()
+    //sukses
+    data class Success(val data: List<Mahasiswa>) : HomeUiState()
+    //error
+    data class Error(val e: Throwable) : HomeUiState()
 }
