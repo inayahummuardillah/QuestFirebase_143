@@ -13,6 +13,11 @@ object PenyediaViewModel{
                 mahasiswaApp().containerApp.MhsRepository
             )
         }
+        initializer {
+            InsertViewModel(
+                mahasiswaApp().containerApp.MhsRepository
+            )
+        }
     }
 }
 
